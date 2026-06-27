@@ -48,14 +48,13 @@ router.delete('/:id', async (req, res, next) => {
 
 router.put('/:id', async (req, res, next) => {
   try {
-    const blog = await Blog.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
-      overwrite: true,
-    });
+    const blog = await Blog.findOneAndReplace(req.params.id, req.body, { new: true, runValidators: true });
     if (!blog) return res.status(404).json({ error: 'Blog not found' });
     res.json({ message: 'Blog updated successfully', blog });
   } catch (error) {
+     if (error.name === 'ValidationError') {
+      return res.status(400).json({ error: error.message });
+    }
     next(error);
   }
 });
