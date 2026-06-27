@@ -1,0 +1,15 @@
+create a new blog post
+update an existing blog post
+delete an existing blog post
+get a single blog post
+get all blog posts
+filter blog posts by search term
+
+{
+  "title": "My First Blog Post",
+  "content": "This is the content of my first blog post.",
+  "category": "Technology",
+  "tags": ["Tech", "Programming"]
+  "createdAt": "2021-09-01T12:00:00Z",
+  "updatedAt": "2021-09-01T12:00:00Z"
+}
