@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Page</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="register">
+        <h1>Register Here!</h1>
+
+        <div id="errorMessage"></div>
+        <div id="successMessage"></div>
+        
+        <form id = "registerForm">
+           <div id="input-field">
+                <label for="email">Email:</label><br>
+                <input type="email" id="email" placeholder="Enter your email" required><br><br>
+                <label for="password" >Password:</label><br>
+                <input type="password" id="password" name="password" minlength="8" placeholder="Enter your password" required><br><br>
+                <input type="submit" value="Register">
+            </div>
+        </form>
+
+        <p>Already have an account? <a href="/frontend/login.html">Login here</a></p>
+    </div>
+
+    <script type="module">
+        import {apiFetch} from '../js/api.js'
+        const registerForm = document.getElementById("registerForm");
+        const emailInput = document.getElementById("email");
+        const passInput = document.getElementById("password");
+        const errorDiv = document.getElementById("errorMessage");
+        const successDiv = document.getElementById("successMessage");
+
+        async function handlerRegister(event){
+            event.preventDefault();
+
+            errorDiv.textContent="";
+            errorDiv.style.display="none";
+            successDiv.textContent="";
+            successDiv.style.display="none";
+
+            const payload = {
+                email: emailInput.value,
+                password: passInput.value
+            }
+
+            try{
+                const response = await apiFetch('/api/auth/register', {
+                    method: "POST", body: JSON.stringify(payload)
+                });
+
+                if (response && response.token) {
+                    localStorage.setItem("token", response.token);
+                    console.log("Token saved to localStorage:", response.token);
+                } else {
+                    console.warn("Backend didn't return a 'token' key. Check your response object:", response);
+                }
+
+                successDiv.textContent = "Registration successful! Redirecting...";
+                successDiv.style.display = "block";
+
+                setTimeout(() => {
+                    window.location.href="/frontend/login.html";
+                }, 1500);
+            }
+            catch(error){
+                errorDiv.textContent = error.message || "An unexpected error occurred.";
+                errorDiv.style.display = "block";
+            }
+        }
+
+        registerForm.addEventListener("submit", handlerRegister);
+    </script>
+</body>
+</html>
